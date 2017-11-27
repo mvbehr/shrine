@@ -43,19 +43,6 @@ describe Shrine::Storage::FileSystem do
       assert_equal File.expand_path("test/prefix"), file_system("test", prefix: "prefix").directory.to_s
     end
 
-    it "creates the given directory" do
-      @storage = file_system(root)
-      assert File.directory?(root)
-
-      @storage = file_system(root, prefix: "uploads")
-      assert File.directory?("#{root}/uploads")
-    end
-
-    it "sets directory permissions" do
-      @storage = file_system(root, directory_permissions: 0777)
-      assert_permissions 0777, root
-    end
-
     it "doesn't change permissions of existing directories" do
       FileUtils.mkdir(root, mode: 0777)
       file_system(root)
@@ -214,12 +201,14 @@ describe Shrine::Storage::FileSystem do
   describe "#clear!" do
     it "can purge the whole directory" do
       @storage = file_system(root)
+      @storage.upload(fakeio, "foo.jpg")
       @storage.clear!
       assert File.directory?(root)
     end
 
     it "reestablishes directory permissions" do
       @storage = file_system(root, directory_permissions: 0777)
+      @storage.upload(fakeio, "foo.jpg")
       @storage.clear!
       assert_permissions 0777, root
     end

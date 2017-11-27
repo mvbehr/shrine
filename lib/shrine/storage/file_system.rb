@@ -117,11 +117,6 @@ class Shrine
         @permissions = permissions
         @directory_permissions = directory_permissions
         @clean = clean
-
-        unless @directory.exist?
-          @directory.mkpath
-          @directory.chmod(directory_permissions) if directory_permissions
-        end
       end
 
       # Copies the file into the given location.
